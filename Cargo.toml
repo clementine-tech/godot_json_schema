@@ -3,6 +3,7 @@ name = "godot_json_schema"
 version = "0.1.0"
 authors = ["Houtamelo"]
 edition = "2021"
+readme = "README.md"
 
 [lib]
 crate-type = ["cdylib"]
@@ -20,3 +21,6 @@ itertools = "0.13.0"
 [features]
 default = []
 integration_tests = []
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
