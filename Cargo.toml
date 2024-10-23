@@ -1,0 +1,22 @@
+[package]
+name = "godot_json_schema"
+version = "0.1.0"
+authors = ["Houtamelo"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+godot = { package = "godot", git = "https://github.com/godot-rust/gdext.git", features = ["experimental-threads", "experimental-godot-api"] }
+serde = { version = "1.0", features = ["derive", "std"] }
+serde_json = "1.0"
+anyhow = "1.0"
+# Do not update to 0.24, it has bugs that stop this crate from working.
+jsonschema = { version = "=0.23", features = ["draft202012"] }
+declarative_type_state = "0.5.0"
+itertools = "0.13.0"
+
+[features]
+default = []
+integration_tests = []

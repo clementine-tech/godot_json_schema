@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://re6isq7q8yax"]
+
+[ext_resource type="Script" path="res://schema_tester.gd" id="1_65xy6"]
+
+[node name="SchemaTester" type="Node"]
+script = ExtResource("1_65xy6")

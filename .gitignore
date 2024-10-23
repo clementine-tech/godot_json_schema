@@ -19,3 +19,34 @@ Cargo.lock
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+/.godot/editor/editor_layout.cfg
+/.godot/editor/favorites
+/.godot/editor/filesystem_cache8
+/.godot/editor/filesystem_update4
+/.godot/editor/print_properties.tscn-editstate-37896d847f458ae8529c2c0225629d7a.cfg
+/.godot/editor/print_properties.tscn-folding-37896d847f458ae8529c2c0225629d7a.cfg
+/.godot/editor/project_metadata.cfg
+/.godot/editor/schema_tester.gd-folding-ef5366f0e9e9d96f3d2ea5a4d0e8add1.cfg
+/.godot/editor/schema_tester.tscn-editstate-2d76d8e96f7c6d928cf8911b8ec87c0b.cfg
+/.godot/editor/schema_tester.tscn-folding-2d76d8e96f7c6d928cf8911b8ec87c0b.cfg
+/.godot/editor/script_editor_cache.cfg
+/.godot/shader_cache/CanvasShaderGLES3/eae8989f77cef1124cfd5349dfad954a28cde2d74718063669799d3994557999/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache
+/.godot/shader_cache/CopyShaderGLES3/78fe9a04c84caf3faff16b2ec231b0b22d06758f997cd43a74f7807c432267ea/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache
+/.godot/shader_cache/CubemapFilterShaderGLES3/197bc236a28b5e5b66bd08f54ba00e65d6f0af38c021fd7b4bd54b18958c9f2e/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache
+/.godot/shader_cache/PostShaderGLES3/a5db140360c83f0b5f7a63344297b98c8c36475d0c0ad87691638527f6ed0ad7/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache
+/.godot/shader_cache/SceneShaderGLES3/a4e6f84d07ac8a193c39b8a3c765c8e6831d737bbfbf4590f60796650fb7c14c/0c9689a7dae2d011729a1e2cf29c71ecb4a7e8bb.cache
+/.godot/shader_cache/SceneShaderGLES3/a4e6f84d07ac8a193c39b8a3c765c8e6831d737bbfbf4590f60796650fb7c14c/6bb7c9a2fd1c4a8fa77cb96555b9b4a720209981.cache
+/.godot/shader_cache/SceneShaderGLES3/a4e6f84d07ac8a193c39b8a3c765c8e6831d737bbfbf4590f60796650fb7c14c/759922d24d18f6e93947155d0345545f9941ad7c.cache
+/.godot/shader_cache/SkyShaderGLES3/4f3ae9927afb1f8c3d9c712192bb9a3879a9549120492b8fd5c657aefa4e2f89/851ad615ab5772632d2dd49f5447ff21ea10b2fe.cache
+/.godot/.gdignore
+/.godot/extension_list.cfg
+/.godot/global_script_class_cache.cfg
+/.godot/scene_groups_cache.cfg
+/.godot/uid_cache.bin
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/libraries/GdSdk_Master.xml
+/.idea/.gitignore
+/.idea/gdext_playground.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
