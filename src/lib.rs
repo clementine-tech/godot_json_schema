@@ -103,6 +103,14 @@ impl SchemaLibrary {
 	pub fn instantiate_unnamed_class(&self, script: Gd<Script>, properties_json: String) -> Variant {
 		self.instantiate_class(ClassId::Script(script), properties_json)
 	}
+
+	/// Constructs a JSON schema response format for a class in OpenAI format.	
+	/// This is useful for calling structured outputs with an LLM using a class-specific schema.
+	#[func]
+	pub fn construct_response_format(&self, schema: String, class_name: String) -> String {
+		format!("{{ \"type\": \"json_schema\", \"json_schema\": {{ \"name\": \"{class_name}\", \"schema\": {schema} }} }}")
+	}
+
 }
 
 impl SchemaLibrary {
@@ -194,9 +202,24 @@ mod internal_prelude {
 #[cfg(feature = "integration_tests")]
 mod gd_ext_lib {
 	use super::*;
+	use clm::*;
 	
 	struct MyExtension;
 
 	#[gdextension]
 	unsafe impl ExtensionLibrary for MyExtension {}
+
+	#[derive(GodotClass)]
+	#[class(base=Node)]
+	struct DummyPlayer {
+	}
+
+	use godot::classes::INode;
+
+	#[godot_api]
+	impl INode for DummyPlayer {
+		fn init(base: Base<Node>) -> Self {			
+			Self {}
+		}
+	}
 }
