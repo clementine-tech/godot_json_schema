@@ -6,12 +6,12 @@ Convert Godot classes into JSON Schemas and instantiate Godot objects from JSON 
 
 ## Running the integration tests
 
-To run the integration tests, build the project with the "integration_tests" feature enabled:
+First, build the project with the "integration_tests" feature enabled:
 ```
 cargo build -F integration_tests
 ```
 
-Then, you can run the tests by running `godot` from `godot/`.
+Then, you can run the tests by playing the main scene "godot/schema_tester.tscn".
 
 ## Setup Example (GDScript)
 
@@ -116,6 +116,6 @@ Generate a schema for your class.
 
 ## Limitations
 1. Properties of your root schema cannot be unnamed Godot classes. They must have a "class_name MyName" statement at the top of the script.
-Note that this is only imposed on the property types, not the root schema's class.
+   Note that this is only imposed on the property types, not the root schema's class.
 
 2. Serializing/deserializing Godot's built-in global enums (any enum in [global scope](https://docs.godotengine.org/en/stable/classes/class_%40globalscope.html#enumerations)) is not supported.

@@ -2,15 +2,17 @@ extends Node
 
 
 func _ready():
+	# Run this first since the second is a coroutine, otherwise the logs will mix.
+	print("Testing person class schema round trip")
+	test_person()
+	
+	print("\n\n")
+	
 	print("Testing structured output call to OpenAI")
 	test_structured_output()
-	# print("Testing person class schema round trip")
-	# test_person()
 
 
 func test_person():
-	var lib = SchemaLibrary.new()
-	
 	var json = """
 	{
 		"gender": "Female",
@@ -43,37 +45,35 @@ func test_person():
 	}
 	"""
 	
-	var res = lib.generate_named_class_schema(&"Person")
-	if res is String:
-		printerr(res)
+	var schema_res = GodotSchema.from_class_name(&"Person")
+	if schema_res is String:
+		printerr(schema_res)
+		return
 	
-	var schema = lib.get_named_class_schema(&"Person")
-	print("Schema:\n" + str(schema))
+	var schema: GodotSchema = schema_res
+	print("Schema:\n" + schema.json)
 	
-	var result = lib.instantiate_named_class(&"Person", json)
+	var result = schema.instantiate(json)
 	
 	if result is Person:
-		var facts = ""
-		for fact in result.facts:
-			facts += "\tText: %s \n\tSalientWord: %s, IsPasswordRelated: %s \n\n" % [fact.text, fact.salient_word, fact.is_password_related]
-		
-		print("Name: %s %s, Gender: %s, Password: %s\nFacts:\n%s" % [result.first_name, result.last_name, result.gender, result.password, facts])
+		print("Instantiated Person:\n" + result.properties_string())
 	else:
-		print("Instantiation failed. Error: " + str(result))
+		printerr("Instantiation failed. Error: " + str(result))
 
 
 func test_structured_output():
 	print("Testing structured output")
 
 	var lib = SchemaLibrary.new()
-	var res = lib.generate_named_class_schema(&"Person")
-	if res is String:
-		printerr(res)
+	var schema_res = lib.generate_named_class_schema(&"Person")
+	if schema_res is String:
+		printerr(schema_res)
+		return
 	
-	var person_schema = lib.get_named_class_schema(&"Person")
-	print("Schema:\n" + str(person_schema))
+	var person_schema: GodotSchema = schema_res
+	print("Schema:\n" + person_schema.json)
 	
-	var response_format = lib.construct_response_format(person_schema, "Person")
+	var response_format = person_schema.open_ai_response_format()
 	print("Response format:\n" + str(response_format))
 
 	var llm_client = LLMClientNode.create(
@@ -95,25 +95,16 @@ func test_structured_output():
 	# chat_result = llm_client.chat_completion_structured(messages, model, provider, 'json_object')
 
 	# Or, you can do JSON schema
-	print("Schema string: " + str(response_format))
+	print("Schema string:\n" + str(response_format))
 	chat_result = llm_client.chat_completion_structured(messages, model, provider, response_format)
 	
-	
-
 	var chat_output = await chat_result.finished
 	print("Chat completion result:")
 	print(chat_output)
 
 	# Instantiate the class
-	var result = lib.instantiate_named_class(&"Person", chat_output)
+	var result = person_schema.instantiate(chat_output)
 	if result is Person:
-		print("Instantiated person: " + result.first_name + " " + result.last_name)
+		print("Instantiated Person:\n" + result.properties_string())
 	else:
-		print("Instantiation failed. Error: " + str(result))
-
-func gd_construct_response_schema(schema: String ,className: String) -> String:	
-	var responseFormat = "{ \"type\": \"json_schema\"," + \
-						" \"json_schema\": { " + \
-						" \"name\": \"" + className + "\"," + \
-						" \"schema\": " + schema + " } }"
-	return responseFormat
+		printerr("Instantiation failed. Error: " + str(result))

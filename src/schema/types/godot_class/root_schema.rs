@@ -22,7 +22,7 @@ impl RootSchema {
 	}
 
 	pub fn add_class(&mut self, class: JClass) {
-		self.add_definition(class.source.id().definition_name(), class);
+		self.add_definition(class.source.definition_name(), class);
 	}
 
 	pub fn instantiate(&self, hydrate_with: &Map<String, Value>) -> Result<Gd<Object>> {

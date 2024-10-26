@@ -38,7 +38,9 @@ impl JEnum {
 	
 	pub fn from_class_source(source: &ClassSource, enum_name: impl Into<StringName>) -> Result<Self> {
 		match source {
-			ClassSource::Script { script, .. } => Self::from_gdscript_class(script.clone(), enum_name),
+			| ClassSource::ScriptNamed(script, _)
+			| ClassSource::ScriptUnnamed(script) => Self::from_gdscript_class(script.clone(), enum_name),
+			
 			ClassSource::Engine(class_name) => Self::from_engine_class(class_name.clone(), enum_name),
 		}
 	}
