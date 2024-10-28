@@ -6,7 +6,7 @@ edition = "2021"
 readme = "README.md"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["lib", "cdylib"]
 
 [dependencies]
 godot = { package = "godot", git = "https://github.com/godot-rust/gdext.git", features = ["experimental-threads", "experimental-godot-api"] }
