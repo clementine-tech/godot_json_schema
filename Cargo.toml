@@ -13,14 +13,21 @@ godot = { package = "godot", git = "https://github.com/godot-rust/gdext.git", fe
 serde = { version = "1.0", features = ["derive", "std"] }
 serde_json = "1.0"
 anyhow = "1.0"
-# Do not update to 0.24, it has bugs that stop this crate from working.
-jsonschema = { version = "=0.23", features = ["draft202012"] }
 declarative_type_state = "0.5.0"
 itertools = "0.13.0"
+clm = { package = "clm", git = "https://github.com/clementine-tech/clm.git", optional = true }
+
+# Do not update to 0.24, it has bugs that stop this crate from working.
+jsonschema = { version = "=0.23", features = ["draft202012"] }
+
+# Override gdext dependency of `clm`
+[patch.crates-io]
+godot = { git = "https://github.com/godot-rust/gdext" }
 
 [features]
 default = []
-integration_tests = []
+integration_tests = ["clm"]
 
+# Add the Documentation in README.md to the crate root.
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "docsrs"]

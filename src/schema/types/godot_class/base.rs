@@ -26,7 +26,9 @@ impl JClass {
 	pub fn instantiate(&self, defs: &BTreeMap<String, Definition>, property_values: &Map<String, Value>) -> Result<Gd<Object>> {
 		let instance_var = match &self.source {
 			// TODO: Check if script has a custom _init with parameters
-			ClassSource::Script { script, .. } => script.clone().call("new".into(), &[]),
+			| ClassSource::ScriptNamed(script, _)
+			| ClassSource::ScriptUnnamed(script) => script.clone().call("new".into(), &[]),
+			
 			ClassSource::Engine(class_name) => ClassDb::singleton().instantiate(class_name.clone()),
 		};
 

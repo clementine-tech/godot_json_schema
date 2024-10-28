@@ -1,55 +1,52 @@
 use super::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ClassSource {
-	Script { script: Gd<Script>, id: ClassId },
+	ScriptNamed(Gd<Script>, StringName),
+	ScriptUnnamed(Gd<Script>),
 	Engine(StringName),
 }
 
 impl ClassSource {
-	pub fn to_reference(&self) -> JRef {
-		let class_name = match self {
-			ClassSource::Script { id, .. } => id.definition_name(),
-			ClassSource::Engine(string_name) => string_name.to_string(),
-		};
-		
-		JRef::new(class_name)
-	}
-	
-	pub fn id(&self) -> ClassId {
-		match self {
-			ClassSource::Script { id, .. } => id.clone(),
-			ClassSource::Engine(string_name) => ClassId::Name(string_name.clone()),
-		}
-	}
-	
 	pub fn from_class_name(class_name: impl Into<StringName>) -> Result<Self> {
 		let class_name = class_name.into();
-		
+
 		if ClassDb::singleton().class_exists(class_name.clone()) {
 			Ok(Self::Engine(class_name))
 		} else if let Ok(script) = find_script(class_name.clone()) {
-			Ok(Self::Script { script, id: ClassId::Name(class_name) })
+			Ok(Self::from_script(script))
 		} else {
 			bail!("Expected class \"{class_name}\" to be in either `ClassDb` or `ProjectSettings`.");
 		}
 	}
-	
+
 	pub fn from_script(script: Gd<Script>) -> Self {
 		let global_name = script.get_global_name();
-		
-		let id = if global_name.is_empty() {
-			ClassId::Script(script.clone())
+
+		if global_name.is_empty() {
+			Self::ScriptUnnamed(script)
 		} else {
-			ClassId::Name(global_name)
-		};
-		
-		Self::Script { script, id }
+			Self::ScriptNamed(script, global_name)
+		}
+	}
+
+	pub fn to_reference(&self) -> JRef {
+		JRef::new(self.definition_name())
+	}
+	
+	pub fn definition_name(&self) -> String {
+		match self {
+			| ClassSource::ScriptNamed(_, name)
+			| ClassSource::Engine(name) => name.to_string(),
+			
+			ClassSource::ScriptUnnamed(script) => script.get_path().to_string(),
+		}
 	}
 
 	pub fn fetch_property_list(&self, definitions: &mut BTreeMap<String, Definition>) -> Result<BTreeMap<String, Type>> {
 		match self {
-			ClassSource::Script { script, .. } => {
+			| ClassSource::ScriptNamed(script, _) 
+			| ClassSource::ScriptUnnamed(script) => {
 				let properties_dict = script.clone().get_script_property_list();
 
 				properties_dict

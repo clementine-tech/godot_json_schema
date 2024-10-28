@@ -192,7 +192,9 @@ fn new_array_from_def(ty: &Definition) -> Result<Variant> {
 		match ty {
 			Definition::Class(class) => {
 				match &class.source {
-					ClassSource::Script { script, .. } => (VariantType::OBJECT, None, Some(script)),
+					| ClassSource::ScriptNamed(script, _)
+					| ClassSource::ScriptUnnamed(script) => (VariantType::OBJECT, None, Some(script)),
+					
 					ClassSource::Engine(class_name) => (VariantType::OBJECT, Some(class_name), None),
 				}
 			}
