@@ -1,5 +1,4 @@
 use super::*;
-use crate::schema::shared_impls::all_shared_impls;
 
 #[derive(Clone, Debug, Default)]
 pub struct JObject {

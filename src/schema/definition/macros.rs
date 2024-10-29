@@ -163,19 +163,26 @@ macro_rules! variant_definitions {
 			    }
 		    }
 		    
-			pub fn get_definition(&self) -> Definition {
+			pub fn get_definition(&self) -> crate::Definition {
 				match self {
-					$( $E::$T => definition_of::<$T>(), )*
+					$( $E::$T => crate::definition_of::<$T>(), )*
 				}
 			}
 		    
-		    pub fn var_from_json(&self, json: &Value) -> Result<Variant> {
+		    pub fn try_from_name(name: &str) -> Option<Self> {
+			    match name {
+				    $( stringify!($T) => Some($E::$T), )*
+				    _ => None,
+			    }
+		    }
+		    
+		    pub fn var_from_json(&self, json: &serde_json::Value) -> Result<godot::prelude::Variant> {
 			    match self {
 				    $( $E::$T => <$T as crate::FromJson>::try_from_json(json).map(|v| v.to_variant()), )*
 			    }
 		    }
 		    
-		    pub const fn variant_type(&self) -> VariantType {
+		    pub const fn variant_type(&self) -> godot::prelude::VariantType {
 			    match self {
 				    $( $E::$T => $P, )*
 			    }

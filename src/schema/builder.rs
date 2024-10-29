@@ -1,5 +1,3 @@
-use crate::schema::types::j_enum::JEnum;
-use crate::schema::types::object::JObject;
 use super::*;
 
 #[derive(Default)]

@@ -1,5 +1,5 @@
-use super::*;
 pub use variant::*;
+use super::*;
 use macros::*;
 
 pub mod json_conversion;
@@ -29,7 +29,12 @@ delegated_enum! {
 			[fn serialize<[S: Serializer]>(&self, serializer: S) -> Result<S::Ok, S::Error>]
 		}
 		
+		impl trait SerializeFields {
+			[fn serialize_fields<[M: SerializeMap]>(&self, map: &mut M) -> Result<(), M::Error>]
+		}
+		
 		impl {
+			[pub fn description(&self) -> Option<&String>]
 			[pub fn add_description(&mut self, description: impl Into<String>)]
 			[pub fn to_json_compact(&self) -> serde_json::Result<String>]
 			[pub fn to_json_pretty(&self) -> serde_json::Result<String>]
@@ -45,6 +50,10 @@ impl Definition {
 	pub fn string() -> Definition { JString::default().into() }
 	pub fn untyped_array() -> Definition { JArray::untyped().into() }
 	pub fn dictionary() -> Definition { JObject::new().into() }
+	
+	pub fn from_class(source: ClassSource, insert_dependencies: &mut BTreeMap<String, Definition>) -> Result<Definition> {
+		JClass::generate(source, insert_dependencies).map(Definition::Class)
+	}
 	
 	pub fn array(item_ty: impl Into<Type>) -> Definition {
 		JArray::new(item_ty).into()

@@ -1,4 +1,3 @@
-use crate::schema::shared_impls::all_shared_impls;
 use super::*;
 
 #[derive(Clone, Debug)]
@@ -13,8 +12,8 @@ impl JClass {
 		self.properties.insert(name.into(), ty.into());
 	}
 
-	pub fn generate(source: ClassSource, defs: &mut BTreeMap<String, Definition>) -> Result<Self> {
-		let properties = source.fetch_property_list(defs)?;
+	pub fn generate(source: ClassSource, insert_dependencies: &mut BTreeMap<String, Definition>) -> Result<Self> {
+		let properties = source.fetch_property_list(insert_dependencies)?;
 
 		Ok(Self {
 			description: None,
@@ -44,7 +43,7 @@ impl JClass {
 					.ok_or_else(|| anyhow!("Expected property \"{name}\" to be in `properties` map."))?;
 
 				let schema = ty.resolve(defs)?;
-				schema.variant_from_json(value, defs)?
+				schema.instantiate(value, defs)?
 			};
 			
 			gd.set(name.into(), &variant);

@@ -1,6 +1,5 @@
 use super::*;
 use godot::meta::ArrayElement;
-use crate::schema::utils::raw_variant_from_json;
 
 primitive_definitions!(null: [Null, ()]);
 primitive_definitions!(boolean: [bool]);

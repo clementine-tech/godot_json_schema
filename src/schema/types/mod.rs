@@ -1,13 +1,14 @@
 use super::*;
 
-pub use crate::schema::definition::*;
 pub use array::*;
+pub use godot_class::*;
+pub use j_enum::*;
 pub use object::*;
 pub use primitives::*;
 pub use reference::*;
-pub use j_enum::*;
+pub use root_schema::*;
 pub use tuple::*;
-pub use godot_class::*;
+pub(crate) use shared_impls::*;
 
 pub mod primitives;
 pub mod object;
@@ -15,8 +16,9 @@ pub mod array;
 pub mod tuple;
 pub mod j_enum;
 pub mod reference;
-pub mod shared_impls;
 pub mod godot_class;
+pub mod root_schema;
+pub mod shared_impls;
 
 delegated_enum! {
 	ENUM_OUT: {

@@ -43,7 +43,13 @@ impl ClassSource {
 		}
 	}
 
-	pub fn fetch_property_list(&self, definitions: &mut BTreeMap<String, Definition>) -> Result<BTreeMap<String, Type>> {
+	pub fn fetch_property_list(&self, defs: &mut BTreeMap<String, Definition>) -> Result<BTreeMap<String, Type>> {
+		fn eval_property_type(dict: Dictionary, defs: &mut BTreeMap<String, Definition>) -> Result<(String, Type)> {
+			let wrapper = PropertyTypeInfo::try_from(dict)?;
+			let ty = wrapper.eval_type(defs)?;
+			Ok((wrapper.property_name, ty))
+		}
+		
 		match self {
 			| ClassSource::ScriptNamed(script, _) 
 			| ClassSource::ScriptUnnamed(script) => {
@@ -60,13 +66,13 @@ impl ClassSource {
 							Some(dict)
 						}
 					})
-					.map(|dict| PropertyWrapper::try_from(dict)?.eval_type(definitions))
+					.map(|dict| eval_property_type(dict, defs))
 					.try_collect()
 			}
 			ClassSource::Engine(class_name) => ClassDb::singleton()
 				.class_get_property_list(class_name.clone())
 				.iter_shared()
-				.map(|dict| PropertyWrapper::try_from(dict)?.eval_type(definitions))
+				.map(|dict| eval_property_type(dict, defs))
 				.try_collect(),
 		}
 	}

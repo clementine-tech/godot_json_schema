@@ -2,6 +2,10 @@ macro_rules! impl_add_description {
     ($($T: ty),*) => {
 	    $(	    
 	        impl $T {
+		        pub const fn description(&self) -> Option<&String> {
+			        self.description.as_ref()
+		        }
+		        
 				pub fn add_description(&mut self, description: impl Into<String>) {
 					debug_assert!(self.description.is_none());
 			

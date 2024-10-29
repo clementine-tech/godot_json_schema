@@ -11,7 +11,7 @@ pub mod schema;
 #[derive(GodotClass)]
 #[class(init, base = Node)]
 pub struct SchemaLibrary {
-	pub schemas: HashMap<ClassSource, Gd<GodotSchema>>,
+	#[var] pub schemas: Array<Gd<GodotSchema>>,
 }
 
 #[godot_api]
@@ -27,15 +27,13 @@ impl SchemaLibrary {
 	/// - Otherwise a `String` containing the error message.
 	#[func]
 	pub fn generate_named_class_schema(&mut self, class_name: StringName) -> Variant {
-		let variant = GodotSchema::from_class_name(class_name);
+		let variant = GodotSchema::from_class_name(class_name.clone());
 		
 		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
-			let source = schema.bind().class.base.source.clone();
-			self.schemas.insert(source, schema.clone());
-			schema.to_variant()
-		} else {
-			variant
+			self.schemas.push(schema);
 		}
+		
+		variant
 	}
 
 	/// Generates a schema for a GdScript class defined in `script`.
@@ -51,12 +49,39 @@ impl SchemaLibrary {
 		let variant = GodotSchema::from_class_script(script);
 
 		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
-			let source = schema.bind().class.base.source.clone();
-			self.schemas.insert(source, schema.clone());
-			schema.to_variant()
-		} else {
-			variant
+			self.schemas.push(schema);
 		}
+
+		variant
+	}
+	
+	/// See [`GodotSchema::from_type_info()`]
+	/// 
+	/// # Returns
+	/// - The `GodotSchema` object containing the type's schema, if successful.
+	/// - Otherwise a `String` containing the error message.
+	#[func]
+	pub fn generate_type_info_schema(
+		&mut self,
+		variant_type: VariantType,
+		class_name: StringName,
+		hint: PropertyHint,
+		hint_string: String,
+		usage: PropertyUsageFlags,
+	) -> Variant {
+		let variant = GodotSchema::from_type_info(
+			variant_type,
+			class_name,
+			hint,
+			hint_string,
+			usage,
+		);
+		
+		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
+			self.schemas.push(schema);
+		}
+		
+		variant
 	}
 
 	/// Returns the `GodotSchema` object containing the schema of class named `class_name`.
@@ -72,9 +97,7 @@ impl SchemaLibrary {
 	pub fn get_named_class_schema(&self, class_name: StringName) -> Variant {
 		let result = ClassSource::from_class_name(class_name.clone())
 			.and_then(|source| {
-				self.schemas
-					.get(&source)
-					.ok_or_else(|| anyhow!("No schema found for class \"{class_name}\"."))
+				self.find_class(source).ok_or_else(|| anyhow!("No schema found for class \"{class_name}\"."))
 			});
 		
 		match result {
@@ -94,28 +117,25 @@ impl SchemaLibrary {
 	pub fn get_unnamed_class_schema(&self, script: Gd<Script>) -> Variant {
 		let source = ClassSource::from_script(script.clone());
 
-		if let Some(schema) = self.schemas.get(&source) {
+		if let Some(schema) = self.find_class(source) {
 			schema.to_variant()
 		} else {
 			"No schema found for class from input script.".to_variant()
 		}
 	}
-	
-	/// Adds a schema to the library.
-	/// 
-	/// Manually doing this is only necessary if you did not generate the schema using either
-	/// [`Self::generate_named_class_schema()`] or [`Self::generate_unnamed_class_schema()`].
-	#[func]
-	pub fn add_schema(&mut self, schema: Gd<GodotSchema>) {
-		let source = schema.bind().class.base.source.clone();
-		self.schemas.insert(source, schema);
-	}
-	
-	/// Removes a schema from the library.
-	#[func]
-	pub fn remove_schema(&mut self, schema: Gd<GodotSchema>) {
-		let source = schema.bind().class.base.source.clone();
-		self.schemas.remove(&source);
+}
+
+impl SchemaLibrary {
+	pub fn find_class(&self, source: ClassSource) -> Option<Gd<GodotSchema>> {
+		self.schemas.iter_shared().find(|schema| {
+			let base = &schema.bind().inner.base;
+			
+			if let Definition::Class(class) = base {
+				class.source == source
+			} else {
+				false
+			}
+		})
 	}
 }
 

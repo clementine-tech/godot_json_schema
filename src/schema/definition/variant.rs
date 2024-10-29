@@ -1,5 +1,4 @@
 use super::*;
-use crate::schema::shared_impls::impl_to_json;
 
 variant_definitions! {
 	pub enum VariantDefinition {
@@ -34,8 +33,13 @@ variant_definitions! {
 }
 
 impl_to_json!(VariantDefinition);
+impl_into_type!(VariantDefinition);
 
 impl VariantDefinition {
+	pub const fn description(&self) -> Option<&String> {
+		None
+	}
+	
 	/// Don't use, this is for compatibility with the enum `Definition`.
 	pub fn add_description(&mut self, _: impl Into<String>) {
 		godot_warn!("`VariantDefinition::add_description` is not allowed.");
@@ -107,8 +111,14 @@ pub trait VariantSourceDefinition {
 impl Serialize for VariantDefinition {
 	fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
 		let mut map = serializer.serialize_map(Some(1))?;
-		map.serialize_entry("$ref", &format!("#/$defs/{}", self.name()))?;
+		self.serialize_fields(&mut map)?;
 		map.end()
+	}
+}
+
+impl SerializeFields for VariantDefinition {
+	fn serialize_fields<M: SerializeMap>(&self, map: &mut M) -> Result<(), M::Error> {
+		map.serialize_entry("$ref", &format!("#/$defs/{}", self.name()))
 	}
 }
 

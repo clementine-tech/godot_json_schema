@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpjskxxg5rrmc"]
+
+[ext_resource type="Script" path="res://properties_printer.gd" id="1_it4dd"]
+
+[node name="PropertiesPrinter" type="Node"]
+script = ExtResource("1_it4dd")

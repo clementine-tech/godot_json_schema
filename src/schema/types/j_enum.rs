@@ -1,5 +1,4 @@
 use super::*;
-use shared_impls::all_shared_impls;
 
 #[derive(Clone, Debug, Default)]
 pub struct JEnum {
