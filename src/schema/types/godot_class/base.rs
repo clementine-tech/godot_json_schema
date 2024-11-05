@@ -26,9 +26,9 @@ impl JClass {
 		let instance_var = match &self.source {
 			// TODO: Check if script has a custom _init with parameters
 			| ClassSource::ScriptNamed(script, _)
-			| ClassSource::ScriptUnnamed(script) => script.clone().call("new".into(), &[]),
+			| ClassSource::ScriptUnnamed(script) => script.clone().call("new", &[]),
 			
-			ClassSource::Engine(class_name) => ClassDb::singleton().instantiate(class_name.clone()),
+			ClassSource::Engine(class_name) => ClassDb::singleton().instantiate(&class_name.clone()),
 		};
 
 		let mut gd = instance_var
@@ -46,7 +46,7 @@ impl JClass {
 				schema.instantiate(value, defs)?
 			};
 			
-			gd.set(name.into(), &variant);
+			gd.set(name, &variant);
 		}
 
 		Ok(gd)
