@@ -30,7 +30,7 @@ impl SchemaLibrary {
 		let variant = GodotSchema::from_class_name(class_name.clone());
 		
 		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
-			self.schemas.push(schema);
+			self.schemas.push(&schema);
 		}
 		
 		variant
@@ -49,7 +49,7 @@ impl SchemaLibrary {
 		let variant = GodotSchema::from_class_script(script);
 
 		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
-			self.schemas.push(schema);
+			self.schemas.push(&schema);
 		}
 
 		variant
@@ -78,7 +78,7 @@ impl SchemaLibrary {
 		);
 		
 		if let Ok(schema) = variant.try_to::<Gd<GodotSchema>>() {
-			self.schemas.push(schema);
+			self.schemas.push(&schema);
 		}
 		
 		variant

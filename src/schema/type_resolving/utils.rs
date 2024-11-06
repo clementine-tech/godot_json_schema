@@ -73,7 +73,7 @@ impl Definition {
 					let mut array = VariantArray::new();
 
 					for json in vec {
-						array.push(raw_variant_from_json(json)?);
+						array.push(&raw_variant_from_json(json)?);
 					}
 
 					Ok(array.to_variant())
@@ -92,7 +92,7 @@ impl Definition {
 						schema.instantiate(json, defs)?
 					};
 
-					array.push(var);
+					array.push(&var);
 				}
 
 				Ok(array.to_variant())
