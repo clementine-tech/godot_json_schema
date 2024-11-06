@@ -30,9 +30,9 @@ impl PropertyTypeInfo {
 			VariantType::INT if self.usage.is_set(PropertyUsageFlags::CLASS_IS_ENUM) => {
 				Some(eval_no_type_hint(&self.class_name, &self.hint_string, self.usage, defs)?)
 			}
-			VariantType::OBJECT => { 
+			VariantType::OBJECT => {
 				Some(eval_no_type_hint(&self.class_name, &self.hint_string, self.usage, defs)?)
-			},
+			}
 			VariantType::ARRAY => {
 				let array =
 					if self.hint == PropertyHint::ARRAY_TYPE {
@@ -64,6 +64,20 @@ fn eval_no_type_hint(
 		return Ok(jref.into());
 	}
 
+	if !class_name.is_empty() {
+		let class_from_name = ClassSource::from_class_name(class_name.clone())
+			.and_then(|source| JClass::generate(source, defs))
+			.map(|class| {
+				let jref = class.source.to_reference();
+				defs.insert(jref.name.clone(), class.into());
+				jref.into()
+			});
+
+		if let Ok(class) = class_from_name {
+			return Ok(class);
+		}
+	}
+
 	if hint_string.is_empty() {
 		return Ok(json_type_of::<Null>());
 	}
@@ -71,23 +85,20 @@ fn eval_no_type_hint(
 	if let Some(ty) = VariantDefinition::try_from_name(hint_string) {
 		return Ok(ty.into());
 	}
-	
+
 	if let Some(ty) = raw_definition_from_name(hint_string) {
 		return Ok(ty.into());
 	}
 
-	let mut try_class = || -> Result<Type> {
-		let class = {
-			let source = ClassSource::from_class_name(hint_string)?;
-			JClass::generate(source, defs)?
-		};
+	let class_from_hint = ClassSource::from_class_name(hint_string)
+		.and_then(|source| JClass::generate(source, defs))
+		.map(|class| {
+			let jref = class.source.to_reference();
+			defs.insert(jref.name.clone(), class.into());
+			jref.into()
+		});
 
-		let jref = class.source.to_reference();
-		defs.insert(jref.name.clone(), class.into());
-		Ok(jref.into())
-	};
-
-	if let Ok(class) = try_class() {
+	if let Ok(class) = class_from_hint {
 		return Ok(class);
 	}
 

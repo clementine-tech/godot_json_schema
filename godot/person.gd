@@ -12,6 +12,7 @@ var first_name: String
 var last_name: String
 var password: String
 var facts: Array[Fact]
+var main_fact: Fact
 
 
 func properties_string() -> String:

@@ -11,7 +11,7 @@ impl ClassSource {
 	pub fn from_class_name(class_name: impl Into<StringName>) -> Result<Self> {
 		let class_name = class_name.into();
 
-		if ClassDb::singleton().class_exists(class_name.clone()) {
+		if ClassDb::singleton().class_exists(&class_name) {
 			Ok(Self::Engine(class_name))
 		} else if let Ok(script) = find_script(class_name.clone()) {
 			Ok(Self::from_script(script))
@@ -70,7 +70,7 @@ impl ClassSource {
 					.try_collect()
 			}
 			ClassSource::Engine(class_name) => ClassDb::singleton()
-				.class_get_property_list(class_name.clone())
+				.class_get_property_list(class_name)
 				.iter_shared()
 				.map(|dict| eval_property_type(dict, defs))
 				.try_collect(),
@@ -88,7 +88,7 @@ fn find_script(class_name: StringName) -> Result<Gd<Script>> {
 			let path = try_get::<GString>(&dict, "path")?;
 
 			let resource = ResourceLoader::singleton()
-				.load(path.clone())
+				.load(&path)
 				.ok_or_else(|| anyhow!("Expected gd_script file at path `{path}` to exist."))?;
 
 			let gd_script = resource

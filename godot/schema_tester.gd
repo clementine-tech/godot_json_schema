@@ -2,7 +2,7 @@ extends Node
 
 
 func _ready():
-	test_structured_3_people()
+	run_tests()
 
 
 func run_tests():
@@ -85,7 +85,12 @@ func test_person():
 				"is_password_related":true
 			}
 		],
-		"password":"carrotballoonAmber"
+		"password":"carrotballoonAmber",
+		"main_fact": {
+			"text": "A lonely fact that must never be grouped with the other silly ones.",
+			"salient_word":"mix",
+			"is_password_related":true
+		}
 	}
 	"""
 	

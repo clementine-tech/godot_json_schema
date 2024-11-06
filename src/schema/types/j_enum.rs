@@ -70,7 +70,7 @@ impl JEnum {
 		let class_db = ClassDb::singleton();
 
 		let variant_names = class_db
-			.class_get_enum_constants_ex(class_name.clone(), enum_name.clone())
+			.class_get_enum_constants_ex(&class_name, &enum_name)
 			.no_inheritance(false)
 			.done();
 
@@ -78,7 +78,7 @@ impl JEnum {
 			.as_slice()
 			.iter()
 			.map(|name| {
-				let value = class_db.class_get_integer_constant(class_name.clone(), name.into());
+				let value = class_db.class_get_integer_constant(&class_name, &StringName::from(name));
 				(name.to_string(), value)
 			}).collect::<BTreeMap<_, _>>();
 

@@ -108,7 +108,7 @@ struct AllDefs<'a> {
 	var_defs: Vec<VariantDefinition>,
 }
 
-impl<'a> Serialize for AllDefs<'a> {
+impl Serialize for AllDefs<'_> {
 	fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
 		let mut map = serializer.serialize_map(None)?;
 
