@@ -64,7 +64,7 @@ impl Serialize for RootSchema {
 			map.serialize_entry("description", description)?;
 		}
 
-		map.serialize_entry("$schema", "http://json-schema.org/draft/2020-12/schema")?;
+		map.serialize_entry("$schema", "https://json-schema.org/draft/2020-12/schema")?;
 
 		let var_defs = {
 			let mut vec = Vec::new();
